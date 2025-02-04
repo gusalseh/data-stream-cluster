@@ -1,0 +1,10 @@
+FROM fluent/fluentd:v1.14-debian-1
+
+# root 권한으로 전환하여 gem 설치
+USER root
+
+# kafka 플러그인 설치 (버전 확인)
+RUN gem install fluent-plugin-kafka
+
+# 다시 fluent 사용자로 전환
+USER fluent

@@ -1,19 +1,5 @@
-{
-    "data": [
-      {
-        "id": 1,
-        "result": "positive",
-        "score": 0.95
-      },
-      {
-        "id": 2,
-        "result": "negative", 
-        "score": 0.35
-      },
-      {
-        "id": 3,
-        "result": "neutral",
-        "score": 0.50
-      }
-    ]
-  }
+{"id": 1, "result": "positive", "score": 0.95}
+{"id": 2, "result": "negative", "score": 0.35}
+{"id": 3, "result": "neutral", "score": 0.50}
+{"id": 4, "result": "positive", "score": 0.88}
+{"id": 5, "result": "netral", "score": 0.98}

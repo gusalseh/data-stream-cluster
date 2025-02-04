@@ -24,14 +24,16 @@ services:
 
   # FluentD: 로그 수집 및 Kafka 전송
   fluentd:
-    image: fluent/fluentd:v1.14-debian-1
+    build:
+      context: .
+      dockerfile: Dockerfile.fluentd
     container_name: fluentd
     ports:
       - "24224:24224"
       - "24224:24224/udp"
-    volumes:
-      - ./fluentd/conf:/fluentd/etc   # FluentD 설정 파일
-      - ./data:/fluentd/log           # AI JSON 파일 및 pos 파일 위치
+    volumes: # 로컬 디렉토리에서 마운트 시키는거임
+      - ./fluentd/conf:/fluentd/etc  # FluentD 설정 파일
+      - ./data:/fluentd/log          # AI JSON 파일 및 pos 파일 위치
     command: ["fluentd", "-c", "/fluentd/etc/fluent.conf", "-vv"]
 
   # Flink JobManager (스트림 처리 컨트롤러)
