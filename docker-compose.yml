@@ -18,6 +18,7 @@ services:
       # 컨테이너 내부 호스트네임 사용: "kafka" (또는 로컬 IP 활용)
       KAFKA_ADVERTISED_HOST_NAME: kafka
       # 컨테이너 시작 시 미리 토픽 생성
+      # <토픽이름>:<파티션수>:<복제계수>
       KAFKA_CREATE_TOPICS: "ai_topic:1:1"
     depends_on:
       - zookeeper
