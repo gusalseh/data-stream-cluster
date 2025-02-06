@@ -19,7 +19,8 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       # 컨테이너 시작 시 미리 토픽 생성
       # <토픽이름>:<파티션수>:<복제계수>
-      KAFKA_CREATE_TOPICS: "ai_topic:1:1"
+#      KAFKA_CREATE_TOPICS: "ai_topic:1:1"
+      KAFKA_CREATE_TOPICS: "positive_topic:3:1,negative_topic:3:1,others_topic:3:1"
     depends_on:
       - zookeeper
 
