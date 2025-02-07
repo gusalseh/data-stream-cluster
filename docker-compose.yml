@@ -15,11 +15,7 @@ services:
       - "9092:9092"
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      # 컨테이너 내부 호스트네임 사용: "kafka" (또는 로컬 IP 활용)
       KAFKA_ADVERTISED_HOST_NAME: kafka
-      # 컨테이너 시작 시 미리 토픽 생성
-      # <토픽이름>:<파티션수>:<복제계수>
-#      KAFKA_CREATE_TOPICS: "ai_topic:1:1"
       KAFKA_CREATE_TOPICS: "positive_topic:3:1,negative_topic:3:1,others_topic:3:1"
     depends_on:
       - zookeeper
@@ -33,31 +29,44 @@ services:
     ports:
       - "24224:24224"
       - "24224:24224/udp"
-    volumes: # 로컬 디렉토리에서 마운트 시키는거임
-      - ./fluentd/conf:/fluentd/etc  # FluentD 설정 파일
-      - ./data:/fluentd/log          # AI JSON 파일 및 pos 파일 위치
+    volumes:
+      - ./fluentd/conf:/fluentd/etc
+      - ./data:/fluentd/log
     command: ["fluentd", "-c", "/fluentd/etc/fluent.conf", "-vv"]
 
-  # Flink JobManager (스트림 처리 컨트롤러)
+  # Flink JobManager
   flink-jobmanager:
     image: flink:1.15
     container_name: flink-jobmanager
-    hostname: jobmanager
-    environment:
-      - JOB_MANAGER_RPC_ADDRESS=jobmanager
     ports:
       - "8081:8081"
     command: jobmanager
-    depends_on:
-      - kafka
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flink-jobmanager
+        jobmanager.rpc.port: 6123
+        taskmanager.numberOfTaskSlots: 1
+    networks:
+      - flink-network
+      - default
 
-  # Flink TaskManager (실제 작업 처리 노드)
+  # Flink TaskManager
   flink-taskmanager:
     image: flink:1.15
     container_name: flink-taskmanager
     depends_on:
       - flink-jobmanager
     command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flink-jobmanager
+        taskmanager.numberOfTaskSlots: 1
+        taskmanager.memory.process.size: 1728m
+    networks:
+      - flink-network
+      - default
 
   # OpenSearch: 처리 결과 저장
   opensearch:
@@ -87,3 +96,7 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+
+networks:
+  flink-network:
+    driver: bridge

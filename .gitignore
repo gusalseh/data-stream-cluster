@@ -1,0 +1,20 @@
+# Flink 빌드 출력 디렉토리
+flink/target/
+
+# 컴파일된 클래스 파일
+*.class
+
+# 로그 파일
+*.log
+
+# 패키지 파일
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# 가상 머신 충돌 로그
+hs_err_pid*
