@@ -84,7 +84,9 @@ services:
     image: prom/prometheus
     container_name: prometheus
     volumes:
+      - opensearch-data:/usr/share/opensearch/data # 컨테이너 내부의 /usr/share/opensearch/data 디렉토리를 opensearch-data라는 이름의 Docker 볼륨에 마운트, 이를 통해 OpenSearch의 데이터가 컨테이너 외부의 볼륨에 저장되어 컨테이너가 삭제되어도 데이터가 유지
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
     ports:
       - "9090:9090"
 
@@ -100,3 +102,7 @@ services:
 networks:
   flink-network:
     driver: bridge
+
+# opensearch-data라는 이름의 Docker 볼륨을 정의합니다. 이 볼륨은 Docker에 의해 관리되며, 호스트 시스템의 특정 위치에 저장
+volumes:
+  opensearch-data:
