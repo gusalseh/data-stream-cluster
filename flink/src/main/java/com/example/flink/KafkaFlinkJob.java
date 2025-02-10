@@ -41,15 +41,18 @@ public class KafkaFlinkJob {
         env.addSource(consumer)
                 // parse JSON
                 .map(line -> {
-                    ObjectMapper mapper = new ObjectMapper();
-                    JsonNode node = mapper.readTree(line);
-
-                    // score >= 0.5 인 값만 분류
-                    double score = node.has("score") ? node.get("score").asDouble() : 0.0;
-                    if(score >= 0.5) {
-                        System.out.println("VALID: " + line);
-                    } else {
-                        System.out.println("INVALID: " + line);
+                    try {
+                        ObjectMapper mapper = new ObjectMapper();
+                        JsonNode node = mapper.readTree(line);
+                        // score >= 0.5 인 값만 분류
+                        double score = node.has("score") ? node.get("score").asDouble() : 0.0;
+                        if (score >= 0.5) {
+                            System.out.println("VALID: " + line);
+                        } else {
+                            System.out.println("INVALID: " + line);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("JSON 파싱 오류: " + line + " - " + e.getMessage());
                     }
                     return line;
                 })
