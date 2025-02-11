@@ -101,7 +101,9 @@ services:
 
   # kafka-opensearch 연결
   kafka-connect:
-    image: confluentinc/cp-kafka-connect:6.2.0
+    build:
+      context: ./kafka-connect
+      dockerfile: Dockerfile
     container_name: kafka-connect
     depends_on:
       - kafka
@@ -117,26 +119,16 @@ services:
       CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
       CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
       CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
       CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR"
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
-      CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components'
-    command:
-      - bash
-      - -c
-      - |
-        echo "Installing connector plugins"
-        confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:11.1.0
-        #
-        echo "Launching Kafka Connect worker"
-        /etc/confluent/docker/run &
-        #
-        sleep infinity
+      # 플러그인 경로 – 이미 이미지에 설치되므로 별도 마운트 불필요
+      CONNECT_PLUGIN_PATH: "/usr/share/confluent-hub-components,/usr/share/java"
 
 networks:
   flink-network:
