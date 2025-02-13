@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.14-debian-1
+FROM fluent/fluentd:v1.17-debian-1
 
 # root 권한으로 전환하여 gem 설치
 USER root
@@ -6,5 +6,11 @@ USER root
 # kafka 플러그인 설치
 RUN gem install fluent-plugin-kafka
 
+# opensearch 플러그인 설치
+RUN gem install fluent-plugin-opensearch --no-document
+
 # 다시 fluent 사용자로 전환
 USER fluent
+
+# 설정 파일 복사 (docker-compose에서 volume 매핑했기 때문에 생략)
+# COPY ./conf/fluent.conf /fluentd/etc/fluent.conf
